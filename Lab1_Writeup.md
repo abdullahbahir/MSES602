@@ -7,7 +7,7 @@
 
 ## Overview
 
-This lab introduced traditional systems administration tasks performed manually and with Python scripting. The goal was to set up an Ubuntu 20.04 LTS Virtual Machine, configure SSH access, verify Python and Git installations, and execute several operational Python scripts. The lab reinforces the DevOps principle of automating repetitive tasks to reduce human error and increase efficiency—shifting from treating systems as "pets" to treating them as "cattle."
+This lab introduced traditional systems administration tasks performed manually and with Python scripting. The goal was to set up an Ubuntu 24.04.4 LTS Virtual Machine (VM name: MSE602-Ubuntu), configure SSH access, verify Python and Git installations, and execute several operational Python scripts. The lab reinforces the DevOps principle of automating repetitive tasks to reduce human error and increase efficiency—shifting from treating systems as "pets" to treating them as "cattle."
 
 ---
 
@@ -15,7 +15,7 @@ This lab introduced traditional systems administration tasks performed manually 
 
 ### Install and Verify SSH
 
-After booting the Ubuntu VM, SSH was installed using `apt` and verified to be running with the `service ssh status` command.
+After booting the Ubuntu VM (`MSE602-Ubuntu`), SSH was already at the newest version (1:9.6p1-3ubuntu13.18) and was verified to be running with the `service ssh status` command. The service showed as **active (running)** on host `abdullah-pc`.
 
 ```bash
 sudo apt install ssh
@@ -30,10 +30,10 @@ service ssh status
 
 ### Test SSH Loopback Connection
 
-The SSH connection was tested locally using the loopback address `127.0.0.1` to confirm the service was accepting connections.
+The SSH connection was tested locally using the loopback address `127.0.0.1` as user `abdullah` to confirm the service was accepting connections.
 
 ```bash
-ssh osboxes@127.0.0.1
+ssh abdullah@127.0.0.1
 exit
 ```
 
@@ -45,7 +45,7 @@ exit
 
 ## Section 2: Python and Pip Verification
 
-Python 3 was already installed on the Ubuntu VM. The version was confirmed and `pip3` was installed for managing Python packages.
+Python 3 was already installed on the Ubuntu VM. The version confirmed was **Python 3.12.3**. `pip3` was already at the newest version (24.0+dfsg-1ubuntu1.3) and confirmed with `pip3 --version` showing **pip 24.0**.
 
 ```bash
 python3 --version
@@ -62,7 +62,7 @@ pip --help
 
 ## Section 3: Git Installation
 
-Git was installed to enable cloning of remote repositories. This is a foundational DevOps tool for version-controlled infrastructure and scripts.
+Git was installed to enable cloning of remote repositories. Git was already at the newest version (1:2.43.0-1ubuntu7.3) and confirmed with `git --version` showing **git version 2.43.0**.
 
 ```bash
 sudo apt install git
@@ -77,15 +77,14 @@ git --version
 
 ## Section 4: Clone the Project Repository
 
-A project directory was created and the MSES602 DevOps utilities repository was cloned from GitHub. The Python scripts were located inside the cloned directory.
+A `Projects` directory was created and the MSES602 DevOps utilities repository was cloned from GitHub. The Python scripts were located at `~/Projects/MSES602_DevOpsUtils/src/python3` and included: `envChk.py`, `netmon.py`, `passChk.py`, and `passChk.py.save`.
 
 ```bash
 cd
 mkdir Projects
 cd Projects
 git clone https://github.com/RegisUniversity/MSES602_DevOpsUtils.git
-ls
-cd ./MSES_DevOpsUtils/src/python3
+cd ./MSES602_DevOpsUtils/src/python3
 ls
 ```
 
@@ -121,13 +120,13 @@ nano passChk.py
 
 ![passChk Source](images/sc7.png)
 
-**Observation:** Most flagged accounts are system-level accounts. Automating this check daily would be far more practical than manually reviewing the files each time.
+**Observation:** Most flagged accounts are system-level accounts (root, bin, sys, sync, games, man, lp, mail, etc.) with usernames shorter than six characters. The only active user account `abdullah` (uid=1000) passed the checks. Automating this check daily would be far more practical than manually reviewing the files each time.
 
 ---
 
 ## Section 6: Running netmon.py – Network Monitor
 
-The `netmon.py` script monitors network connectivity and reports whether the network is up or down. It sleeps between checks and can be extended to take automated action on failure.
+The `netmon.py` script monitors network connectivity at 60-second intervals and reports whether the network is up or down. It can be extended to trigger alerts or corrective actions on failure.
 
 ```bash
 python3 netmon.py
@@ -249,6 +248,19 @@ print("System environment check completed.")
 pip3 install psutil
 python3 lab1.py
 ```
+
+The script produced the following output on the `MSE602-Ubuntu` VM:
+
+- **OS:** Linux, Ubuntu 24.04.4 LTS, aarch64, Hostname: `abdullah-pc`
+- **CPU:** 4 cores / 4 logical CPUs, Usage: 0.8%
+- **Memory:** 3.92 GB total, 1.24 GB used (36.0%)
+- **Disk:** 47.98 GB total, 10.14 GB used (22.3%)
+- **Network:** 0.06 MB sent, 0.08 MB received
+- **SSH:** port 22 on 127.0.0.1 is OPEN (reachable)
+- **Boot Time:** 2026-08-30 16:07:09, Uptime: 1.02 hours
+- **Logged-in user:** `abdullah` (seat0 & tty2), Login: 2026-08-30 16:07:49
+- **Running Processes:** 204
+- **Status:** CPU, Memory, and Disk usage all normal
 
 **Screenshot sc9 – psutil Install and Script Output (Part 1):**
 
