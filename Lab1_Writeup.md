@@ -1,53 +1,51 @@
-# Lab 1 – Introduction to DevOps: Traditional Ops with Python
+# MSES602 – Lab #1: Introduction to DevOps – Traditional Ops with Python
 
-College of Computer & Information Sciences  
-Regis University  
-
----
-
-## Abstract
-
-This paper describes the steps taken to complete Lab #1 of MSES602, which focused on traditional systems operations using an Ubuntu 20.04 LTS Virtual Machine. The lab covered installing and verifying SSH, Python 3, pip, and Git, cloning a DevOps utilities repository, and running several Python scripts for password security auditing, network monitoring, and system environment checks. The lab was extended by modifying `envChk.py` to include SSH connectivity testing, system uptime, logged-in users, running process counts, and automated status warnings.
-
-**Keywords:** DevOps, Ubuntu, SSH, Python, psutil, scripting, automation
+**Course:** MSES602  
+**Lab:** #1 – Introduction to DevOps: Traditional Ops with Python  
 
 ---
 
-## Introduction
+## Overview
 
-The purpose of this lab was to practice traditional systems administration tasks manually and through Python scripting on an Ubuntu 20.04 LTS Virtual Machine. As described in the DevOps Handbook, manual system setup is error-prone, time-consuming, and expensive. John Willis's CAMS model (Culture, Automation, Measurement, Sharing) emphasizes automation as a core DevOps principle. This lab provided hands-on experience with the foundational tools and scripts that form the basis of that automation, reinforcing the idea of treating systems as reproducible "cattle" rather than carefully maintained "pets."
+This lab introduced traditional systems administration tasks performed manually and with Python scripting. The goal was to set up an Ubuntu 20.04 LTS Virtual Machine, configure SSH access, verify Python and Git installations, and execute several operational Python scripts. The lab reinforces the DevOps principle of automating repetitive tasks to reduce human error and increase efficiency—shifting from treating systems as "pets" to treating them as "cattle."
 
 ---
 
-## Procedure & Observations
+## Section 1: VM Setup and SSH Configuration
 
-### SSH Installation and Verification
+### Install and Verify SSH
 
-After starting the Ubuntu VM, SSH was installed using the `apt` package manager and the service status was verified.
+After booting the Ubuntu VM, SSH was installed using `apt` and verified to be running with the `service ssh status` command.
 
 ```bash
 sudo apt install ssh
 service ssh status
 ```
 
+**Screenshot sc1 – SSH Service Status:**
+
 ![SSH Service Status](images/sc1.png)
 
-The SSH service was confirmed to be active and running. A loopback connection was then tested to verify that SSH was accepting connections on `127.0.0.1`.
+---
+
+### Test SSH Loopback Connection
+
+The SSH connection was tested locally using the loopback address `127.0.0.1` to confirm the service was accepting connections.
 
 ```bash
 ssh osboxes@127.0.0.1
 exit
 ```
 
-![Successful SSH Connection](images/sc2.png)
+**Screenshot sc2 – Successful SSH Connection:**
 
-The connection was successful. The loopback address `127.0.0.1` confirmed SSH was listening locally before testing with external connections.
+![Successful SSH Connection](images/sc2.png)
 
 ---
 
-### Python 3 and pip Installation
+## Section 2: Python and Pip Verification
 
-The Python 3 version was verified and `pip3` was installed to enable Python package management for later steps.
+Python 3 was already installed on the Ubuntu VM. The version was confirmed and `pip3` was installed for managing Python packages.
 
 ```bash
 python3 --version
@@ -56,98 +54,107 @@ pip3 --version
 pip --help
 ```
 
-![Python3 and Pip](images/sc3.png)
+**Screenshot sc3 – Python3 Version and Pip Installation:**
 
-Python 3 was already present on the Ubuntu image. pip3 was successfully installed and confirmed working.
+![Python3 and Pip](images/sc3.png)
 
 ---
 
-### Git Installation
+## Section 3: Git Installation
 
-Git was installed to support version-controlled scripts and repository cloning — a foundational DevOps practice.
+Git was installed to enable cloning of remote repositories. This is a foundational DevOps tool for version-controlled infrastructure and scripts.
 
 ```bash
 sudo apt install git
 git --version
 ```
 
-![Git Version](images/sc4.png)
+**Screenshot sc4 – Git Version:**
 
-Git was installed and confirmed at an acceptable version. Storing scripts in Git repositories is a key DevOps practice that ensures repeatability and collaboration.
+![Git Version](images/sc4.png)
 
 ---
 
-### Cloning the DevOps Utilities Repository
+## Section 4: Clone the Project Repository
 
-A `Projects` directory was created and the MSES602 DevOps utilities repository was cloned from GitHub. The Python scripts used in subsequent steps were located inside the cloned directory.
+A project directory was created and the MSES602 DevOps utilities repository was cloned from GitHub. The Python scripts were located inside the cloned directory.
 
 ```bash
 cd
 mkdir Projects
 cd Projects
 git clone https://github.com/RegisUniversity/MSES602_DevOpsUtils.git
+ls
 cd ./MSES_DevOpsUtils/src/python3
 ls
 ```
 
-![Cloned Repository and Python Files](images/sc5.png)
+**Screenshot sc5 – Cloned Repository and Python Files:**
 
-The repository cloned successfully and the Python scripts were visible and accessible.
+![Cloned Repo](images/sc5.png)
 
 ---
 
-### Running passChk.py – Password Security Audit
+## Section 5: Running passChk.py – Password Security Audit
 
-The `passChk.py` script reads the system user and password files and flags any accounts with short usernames or passwords that could be easily guessed by brute-force tools.
+The `passChk.py` script scans all user accounts on the Ubuntu image and flags any accounts with short usernames or passwords that would be easily guessed by brute-force tools.
 
 ```bash
 python3 passChk.py
 ```
 
-![passChk.py Output](images/sc6.png)
+**Screenshot sc6 – passChk.py Output:**
 
-The output flagged several accounts. Most were system-level accounts rather than active user accounts. The script source was then reviewed in `nano` to understand its logic.
+![passChk Output](images/sc6.png)
+
+---
+
+### Reviewing the passChk.py Source Code
+
+The script was opened in `nano` to review how it reads the system user and password files and applies its security checks.
 
 ```bash
 nano passChk.py
 ```
 
-![passChk.py Source Code](images/sc7.png)
+**Screenshot sc7 – passChk.py Source Code:**
 
-Reviewing the code showed how it opens `/etc/passwd` and `/etc/shadow`, iterates over accounts, and applies length thresholds. Running this check manually every day would be tedious — automating it with a script makes the process consistent and fast.
+![passChk Source](images/sc7.png)
+
+**Observation:** Most flagged accounts are system-level accounts. Automating this check daily would be far more practical than manually reviewing the files each time.
 
 ---
 
-### Running netmon.py – Network Monitor
+## Section 6: Running netmon.py – Network Monitor
 
-The `netmon.py` script polls network connectivity at intervals and reports whether the network is reachable. It can be extended to trigger alerts or corrective actions on failure.
+The `netmon.py` script monitors network connectivity and reports whether the network is up or down. It sleeps between checks and can be extended to take automated action on failure.
 
 ```bash
 python3 netmon.py
 ```
 
-![netmon.py Running](images/sc8.png)
+**Screenshot sc8 – netmon.py Running:**
 
-The script reported the network as up and continued sleeping between checks. This type of lightweight monitor is useful when diagnosing intermittent connectivity issues from the application side.
+![netmon Output](images/sc8.png)
 
 ---
 
-### Extending envChk.py – System Environment Check
+## Section 7: Extended envChk.py – System Environment Check
 
-For the final task, `psutil` was installed and the `envChk.py` script was extended into `lab1.py` with the following additional capabilities beyond the original:
+For the final task, the `envChk.py` script was extended with additional system metrics beyond the original. The new script (`lab1.py`) was written to include:
 
-- SSH connectivity check (port 22 on localhost)
+- System information (OS, hostname, machine)
+- CPU usage (cores and current utilization)
+- Memory usage (total, available, used)
+- Disk usage (total, used, free)
+- Network I/O counters
+- **SSH connectivity check** – verifies port 22 is reachable on localhost
 - System uptime since last boot
 - Logged-in users
 - Running process count
-- Threshold-based status warnings for CPU, memory, and disk
+- Automated status warnings for CPU, memory, and disk thresholds
 
-```bash
-pip3 install psutil
-python3 lab1.py
-```
-
-The extended script `lab1.py`:
+### Extended Script: `lab1.py`
 
 ```python
 """
@@ -236,34 +243,42 @@ print()
 print("System environment check completed.")
 ```
 
-![Script Output – System and CPU Info](images/sc9.png)
+### Install psutil and Run the Script
 
-![Script Output – Memory, Disk, and Network](images/sc10.png)
+```bash
+pip3 install psutil
+python3 lab1.py
+```
 
-![Script Output – SSH Check, Uptime, Users, and Status](images/sc11.png)
+**Screenshot sc9 – psutil Install and Script Output (Part 1):**
 
-The script ran successfully. The SSH connectivity check confirmed port 22 was open, and all system status indicators were within normal thresholds. Adding SSH connectivity to the environment check is a useful real-world addition — an operator running this script can immediately know whether the SSH service is reachable without running a separate command.
+![envChk Output 1](images/sc9.png)
+
+**Screenshot sc10 – Script Output (Part 2):**
+
+![envChk Output 2](images/sc10.png)
+
+**Screenshot sc11 – Script Output (Part 3 – SSH Check and Status):**
+
+![envChk Output 3](images/sc11.png)
 
 ---
 
-## Conclusions
+## Conclusion
 
-This lab demonstrated the process of manually setting up an Ubuntu VM and running Python-based operational scripts. The steps covered SSH setup, Python and pip verification, Git installation, repository cloning, password auditing, network monitoring, and system environment checking. Each task illustrated why automating these operations with scripts stored in version-controlled repositories is preferable to manual execution. The extended `lab1.py` script added practical monitoring features — SSH connectivity, uptime, user sessions, and process counts — that give an operator a comprehensive system snapshot in a single command. As emphasized in the DevOps Handbook, this type of automation is central to the CAMS model and is the foundation for moving from treating systems as "pets" to treating them as reproducible "cattle."
+This lab demonstrated traditional systems administration tasks on an Ubuntu VM, including SSH setup, Python scripting, and system monitoring. A key takeaway is that automating these tasks with Python eliminates manual effort, reduces errors, and enables repeatable, consistent system checks.
+
+The extended `lab1.py` script goes beyond the original `envChk.py` by adding an **SSH connectivity check**, system uptime, logged-in users, process count, and threshold-based status warnings. These additions reflect practical, real-world operational monitoring concerns.
+
+As emphasized in the DevOps Handbook, automation is central to the CAMS model (Culture, Automation, Measurement, Sharing). Scripts like these, stored and versioned in Git repositories, represent the shift from treating systems as "pets" to treating them as reproducible, disposable "cattle."
 
 ---
 
 ## References
 
-Willis, J., Debois, P., Humble, J., & Kim, G. (2021). *The DevOps Handbook: How to Create World-Class Agility, Reliability, & Security in Technology Organizations, 2nd ed.* IT Revolution Press.
-
-Linuxize (2018). How to install Pip on Ubuntu 18.04.
-
-Menchaca, J. (2018). DevOps Concepts: Pets vs Cattle.
-
-Parkash, A. (2018). Using apt-get Commands in Linux [Complete Beginners Guide].
-
-Rendek, L. (2018). Enable SSH on Ubuntu 18.04 Bionic Beaver Linux.
-
-Willis, J. (2011a). DevOps Culture (Part 1). IT Revolution Press.
-
-psutil documentation. https://psutil.readthedocs.io/en/latest/
+- Willis, J., Debois, P., Humble, J., & Kim, G. (2021). *The DevOps Handbook, 2nd ed.* IT Revolution Press.
+- Linuxize (2018). How to install Pip on Ubuntu 18.04.
+- Menchaca, J. (2018). DevOps Concepts: Pets vs Cattle.
+- Parkash, A. (2018). Using apt-get Commands in Linux.
+- Rendek, L. (2018). Enable SSH on Ubuntu 18.04 Bionic Beaver Linux.
+- psutil documentation: https://psutil.readthedocs.io/en/latest/
