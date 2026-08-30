@@ -1,3 +1,8 @@
+"""
+MSES602 - Lab #1: Introduction to DevOps - Traditional Ops with Python
+System environment check script (extends envChk.py with an SSH reachability check).
+"""
+
 import psutil
 import platform
 import socket
@@ -92,6 +97,22 @@ print("Bytes Sent:",
 
 print("Bytes Received:",
       round(network.bytes_recv / (1024 ** 2), 2), "MB")
+
+
+# ---------------------------------------------------------
+# SSH Connectivity
+# ---------------------------------------------------------
+
+print_section("SSH CONNECTIVITY")
+
+ssh_host = "127.0.0.1"
+ssh_port = 22
+
+try:
+    with socket.create_connection((ssh_host, ssh_port), timeout=3):
+        print(f"SSH port {ssh_port} on {ssh_host} is OPEN (reachable).")
+except (socket.timeout, ConnectionRefusedError, OSError):
+    print(f"SSH port {ssh_port} on {ssh_host} is NOT reachable.")
 
 
 # ---------------------------------------------------------
