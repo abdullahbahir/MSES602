@@ -2,6 +2,9 @@
 
 **Course:** MSES602  
 **Lab:** #1 – Introduction to DevOps: Traditional Ops with Python  
+**Instructor:** Professor Shari Plantz-Masters, Ph.D.  
+**Student:** Abdullah Bahir  
+**Date:** August 30, 2026  
 
 ---
 
